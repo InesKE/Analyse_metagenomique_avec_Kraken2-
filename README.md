@@ -154,6 +154,130 @@ explorer.exe lib3_krona.html  # Pour Windows
 xdg-open lib3_krona.html  # Pour Linux
 ```
 ---
+# == Analyse Métagénomique avec Kraken2 pour PacBio ==
+Ce script est conçu pour analyser des séquences ADN longues produites par PacBio.
+Contrairement aux séquences Illumina (courtes et en paire), les lectures PacBio sont longues et single-end.
+Nous allons adapter le pipeline pour gérer ces différences.
+
+# === Étape 1 : Préparer l'environnement ===
+Comme Kraken2 et Trimmomatic ont déjà été installés lors du premier exercice,
+nous utilisons le même environnement de travail.
+```bash
+conda activate metagenomics
+```
+On active l'environnement existant
+
+On se place dans le dossier de travail déjà créé.
+```bash
+cd ~/metagenomics
+```
+# == Étape 2 : Importer les données PacBio ==
+On commence par importer les fichiers contenant les lectures PacBio.
+On place ces fichiers dans le dossier de travail "metagenomics".
+```bash
+ls
+```
+Vérifier que les fichiers sont bien présents
+
+Vérifier si les fichiers sont au format FASTQ ou BAM.
+```bash
+file *
+```
+Si le fichier est au format BAM, on le convertit en FASTQ.
+```bash
+for bam_file in *.bam; do
+    base_name=$(basename $bam_file .bam)
+    samtools fastq $bam_file > ${base_name}.fastq
+    gzip ${base_name}.fastq  # On compresse le fichier FASTQ
+done
+```
+
+Vérifier que la conversion a bien fonctionné.
+```bash
+ls *.fastq.gz
+```
+
+# == Étape 3 : Créer un dossier pour stocker les résultats ==
+On crée un dossier spécifique pour les résultats de Kraken2.
+```bash
+mkdir -p kraken_pacbio_report
+```
+ -p permet d'éviter une erreur si le dossier existe déjà
+
+# == Étape 4 : Exécuter Kraken2 pour classifier les séquences ==
+On exécute Kraken2 directement sans nettoyage préalable.
+Le fichier "in00345_1V1V9.fastq.gz" correspond au nom attribué à l'échantillon analysé.
+```bash
+kraken2 --use-names \
+    --db minikraken2_v2_8GB_201904_UPDATE \
+    --threads 4 \
+    --report kraken_pacbio_report/lib_pacbio.report \
+    --gzip-compressed ../Raw_data/in00345_1V1V9.fastq.gz > kraken_pacbio_report/lib_pacbio.kraken 2> kraken_pacbio_report/kraken_pacbio_error_log
+```
+# == Étape 5 : Vérifier les fichiers de sortie ===
+Vérifier si la base de données Kraken2 est bien présente.
+La commande suivante a été utilisée pour confirmer cela :
+```bash
+ls -lh ../minikraken2_v2_8GB_201904_UPDATE
+```
+Vérifier si les fichiers de sortie ne sont pas vides.
+La commande suivante permet de s'assurer que les résultats ont bien été générés :
+```bash
+ls -lh kraken_pacbio_report/lib_pacbio.report kraken_pacbio_report/lib_pacbio.kraken
+```
+Consulter les premières lignes des résultats pour un aperçu.
+```bash
+head kraken_pacbio_report/lib_pacbio.report
+head kraken_pacbio_report/lib_pacbio.kraken
+```
+Vérifier s'il y a des erreurs éventuelles dans le fichier log.
+```bash
+cat kraken_pacbio_report/kraken_pacbio_error_log
+```
+# === Étape 6 : Visualisation avec Krona ==
+Krona permet de visualiser les résultats sous forme de diagramme interactif.
+```bash
+cd ~
+git clone https://github.com/marbl/Krona.git
+cd Krona/KronaTools
+sudo ./install.pl
+```
+On ajoute Krona au PATH.
+```bash
+export PATH=$PATH:~/Krona/KronaTools/bin
+source ~/.bashrc
+```
+On prépare les données pour Krona.
+```bash
+cd ~/metagenomics/kraken_pacbio_report
+tail -n +2 lib_pacbio.report | cut -f2,3,6 > lib_pacbio_krona_input.txt
+```
+On génère un fichier HTML interactif.
+```bash
+ktImportText lib_pacbio_krona_input.txt -o lib_pacbio_krona.html
+```
+On ouvre la visualisation dans un navigateur web.
+```bash
+explorer.exe lib_pacbio_krona.html
+```
+Windows
+```bash
+xdg-open lib_pacbio_krona.html
+```
+Linux
+
+# == Étape 7 : Visualisation des gènes d'intérêt ==
+On peut extraire et visualiser des gènes spécifiques détectés dans les résultats Kraken2.
+Exemple : Rechercher les séquences correspondant à un gène spécifique.
+```bash
+grep -i "gene_d_interet" kraken_pacbio_report/lib_pacbio.report > kraken_pacbio_report/gene_interet.txt
+```
+Vérifier les résultats.
+```bash
+cat kraken_pacbio_report/gene_interet.txt
+```
+---
+
 * [my linkedin](https://www.linkedin.com/in/ines-kouadio-668bb8298/)
 * [my mail](kouadioines989@gmail.com) 
 * 😘 
