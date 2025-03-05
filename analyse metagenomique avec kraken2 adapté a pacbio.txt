@@ -1,12 +1,14 @@
-#=================== Analyse Métagénomique avec Kraken2 pour PacBio ===================
-# Ce script est conçu pour analyser des séquences ADN longues produites par PacBio.
-# Contrairement aux séquences Illumina (courtes et en paire), les lectures PacBio sont longues et single-end.
-# Nous allons adapter le pipeline pour gérer ces différences.
+# == Analyse Métagénomique avec Kraken2 pour PacBio ==
+Ce script est conçu pour analyser des séquences ADN longues produites par PacBio.
+Contrairement aux séquences Illumina (courtes et en paire), les lectures PacBio sont longues et single-end.
+Nous allons adapter le pipeline pour gérer ces différences.
 
-#============================ Étape 1 : Préparer l'environnement ============================
-# Comme Kraken2 et Trimmomatic ont déjà été installés lors du premier exercice,
-# nous utilisons le même environnement de travail.
-conda activate metagenomics  # On active l'environnement existant
+# ==Étape 1 : Préparer l'environnement ==
+Comme Kraken2 et Trimmomatic ont déjà été installés lors du premier exercice,
+nous utilisons le même environnement de travail.
+```bash
+conda activate metagenomics
+```# On active l'environnement existant
 
 # On se place dans le dossier de travail déjà créé.
 cd ~/metagenomics
