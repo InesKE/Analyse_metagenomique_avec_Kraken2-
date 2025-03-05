@@ -1,6 +1,8 @@
 # Analyse_metagenomique_avec_Kraken2-
 Ce pipeline permet d’analyser des données de séquençage métagénomique. Il utilise Kraken2 pour classifier les séquences ADN et Krona pour visualiser les résultats.
 
+![Resultat](https://github.com/user-attachments/assets/75f70c66-a26a-4267-8682-e4dac5a475b0)
+
 # ========= Analyse métagénomique avec Kraken2 =======
 ---
 * [Site de formation officiel](https://ugene.net/metagenomic-classification-with-kraken/)
